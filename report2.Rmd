@@ -1,0 +1,62 @@
+---
+title: "Final Project. Part 2: Basic Inferential Data Analysis Instructions"
+author: "Kadyrbek"
+date: "11/18/2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Synopsis
+
+In this project we are going to analyze ToothGrowth data from datasets package. We will compare the length of odontoblasts by supplement types and doses amounts.
+
+#1. Load the ToothGrowth data and perform some basic exploratory data analyses
+
+Here is some exploratory data analyses of ToothGrowth data
+```{r}
+library(datasets)
+head(ToothGrowth)
+str(ToothGrowth)
+```
+#2. Provide a basic summary of the data.
+```{r}
+summary(ToothGrowth)
+```
+From the table above we can see that there are 60 observations with two supplement types 30 observation each. There are 3 types of dose amounts 0.5, 1 and 2.
+
+```{r}
+boxplot(ToothGrowth$len~ToothGrowth$supp)
+```
+
+#3. Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose.
+
+Here are confidence intervals for supplement types.
+```{r}
+oj<-ToothGrowth[ToothGrowth$supp=="OJ",]
+vc<-ToothGrowth[ToothGrowth$supp=="VC",]
+ojt<-t.test(oj$len, alternative = "two.sided",conf.level = .8)$conf
+vct<-t.test(vc$len, alternative = "two.sided",conf.level = .8)$conf
+list("OJ interval"=ojt,"VC interval"=vct)
+t.test(oj$len,vc$len)
+```
+
+Here are confidence intervals for different dose amounts. 
+```{r}
+half<-ToothGrowth[ToothGrowth$dose==0.5,]
+one<-ToothGrowth[ToothGrowth$dose==1,]
+two<-ToothGrowth[ToothGrowth$dose==2,]
+ht<-t.test(half$len, alternative = "two.sided")$conf
+ot<-t.test(one$len, alternative = "two.sided")$conf
+tt<-t.test(two$len, alternative = "two.sided")$conf
+list("Half dose interval"=ht,"One dose interval"=ot,"Two dose interval"=tt)
+```
+
+#4. State your conclusions and the assumptions needed for your conclusions.
+
+The p-value of T test for different supplement type is equal to 0.06 and slightly above the 0.05. This tells us that it is not significant or it slightly significant. 
+Confidence interval of OJ is higher and narrower than VC  with confidence level of 80%. If we use confidence level of 95% as we do it usual then their intervals intersept, which says there is no 95% confidence in the observations.
+
+However, in comparing the length for different dose amounts, it is stright forward. 0.5 dose length values are less than 1 dose, and 1 dose values are less than 2 dose values with confidence level of 95%. 

@@ -1,0 +1,63 @@
+---
+title: "Final Project. Part 1: Simulation Exercise"
+author: "Kadyrbek"
+date: "11/18/2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Synopsis
+In this project we will run a thousand simulations with 40 exponential number each. We are going to investigate how all the simulated numbers are distributed and compare it with distribution of means of each simulations. Moreove, we will compare sample properties with theoretical ones and see the difference between them.
+
+# Simulation of the data
+Here, the data will be simulated with mean=standard deviation=1/lambda, where lambda=0.2. The total number of simulations is equal to 1000 with 40 random exponential number each. 
+```{r}
+set.seed(12345)
+lambda<-0.2
+n<-40
+sim<-1000
+df<-matrix(rexp(n*sim,lambda),sim,n) #creates matrix sim by n (1000x40)
+dfmean<-apply(df,1,mean) # Takes means of each simulation(row)
+```
+
+#1.Show the sample mean and compare it to the theoretical mean of the distribution.
+
+Sample mean =`r mean(dfmean)` and Theoretical mean = `r 1/lambda`
+Difference between theoretical and sample means is equal to `r 1/lambda-mean(dfmean)`.
+```{r}
+list("sample mean"=mean(dfmean),"theoretical mean"=(1/lambda),
+     "Difference between theo and sample means"=(1/lambda)-mean(dfmean))
+```
+Following graph shows us that the sample mean(red) and theoretical mean(blue) are very close to each other.
+```{r fig.height=5, fig.width=10}
+hist(dfmean,breaks = 100,main = "Histogram of averages of simulations",xlab = "averages")
+abline(v=mean(dfmean),col="red",lwd=2)
+abline(v=1/lambda,col="blue",lwd=2)
+```
+#2.Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution.
+
+Sample variance =`r var(dfmean)` and Theoretical variance = `r (1/lambda)^2/n`
+Difference between theoretical and sample variances is equal to `r (1/lambda)^2/n-var(dfmean)`.
+```{r}
+list("sample variance"=var(dfmean),"theoretical variance"=(1/lambda)^2/n,
+     "Difference between theo and sample variances"=(1/lambda)^2/n-var(dfmean))
+```
+Following graph shows us that the sample variance(dashed red) and theoretical variance(blue line) are very close to each other.
+```{r fig.height=5, fig.width=10}
+hist(dfmean,breaks = 100,main = "Histogram of averages of simulations",xlab = "averages")
+abline(v=c(mean(dfmean)+var(dfmean),mean(dfmean)-var(dfmean)),col="red",lwd=4,lty=3)
+abline(v=c(mean(dfmean)+(1/lambda)^2/n,mean(dfmean)-(1/lambda)^2/n),col="blue",lwd=2)
+```
+#3.Show that the distribution is approximately normal.
+
+```{r fig.height=5, fig.width=10}
+par(mfrow=c(1,2))
+hist(df,main="Hist of all simulations together",xlab = "exp numbers",breaks = 100)
+hist(dfmean,main="Hist of averages of simulations",xlab = "averages",breaks = 100)
+abline(v=mean(dfmean),col="red",lwd=2)
+```
+
+The above plot represents the histograms of all simulations numbers and averages of simulations with red lines indicating the mean of the distribution of the averages. We can observe that the averages is distributed symmetricly around mean(red line), has bell shape curve and peak is on the mean point.These properties are enought to claim that data is approximately normaly distributed.
